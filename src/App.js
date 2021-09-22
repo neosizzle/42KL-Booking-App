@@ -1,25 +1,66 @@
-import logo from './logo.svg';
-import './App.css';
+import {
+	BrowserRouter as Router,
+	Switch,
+	Route,
+  } from "react-router-dom";
+import Dashboard from "./routes/dashboard"
+import Book from "./routes/booking";
+import Login from './routes/login';
+import Auth from "./routes/auth"
+import { createTheme, ThemeProvider, responsiveFontSizes} from '@mui/material/styles';
+import AdapterMoment from '@mui/lab/AdapterMoment';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import "./css/root.css"
+
+/*
+** Custom theme
+*/
+let theme = createTheme( {
+	palette: {
+	  type: 'light',
+	  primary: {
+		main: '#3fff98',
+		light : '#8effb9',
+		dark : '#00e35b',
+	  },
+	  secondary: {
+		main: '#ff3fa5',
+		light: '#fd81c0',
+		dark: '#ff0074'
+	  },
+	},
+  });
+
+theme = responsiveFontSizes(theme);
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  	return (
+		<LocalizationProvider dateAdapter={AdapterMoment}>
+		<ThemeProvider theme = {theme}>
+			<Router className="root">
+				<Switch>
+					<Route path = "/dashboard" exact>
+						<Dashboard/>
+					</Route>
+					<Route path = "/dashboard/manage" exact>
+						<div>
+							Manage
+						</div>
+					</Route>
+					<Route path = "/auth" exact>
+						<Auth/>
+					</Route>
+					<Route path = "/booking" exact>
+						<Book/>
+					</Route>
+					<Route path = "/" exact>
+						<Login/>
+					</Route>
+				</Switch>
+			</Router>
+		</ThemeProvider>
+		</LocalizationProvider>
+  	);
 }
 
 export default App;
