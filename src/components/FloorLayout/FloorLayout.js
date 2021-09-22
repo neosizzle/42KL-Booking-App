@@ -1,36 +1,23 @@
 import { ImageMap } from "@qiuz/react-image-map";
 import SeatUnit from "./SeatUnit";
 import { useEffect, useState } from "react";
+import moment from "moment";
 
-const data = require ("../../data/seat")
+let data = require("../../data/seat");
+let data2 = require("../../data/seat2");
 
 /*
-* Helper function to generate interactive map areas by taking the map data
+** Helper function to retrive seat data accordingly
 */
-const generateMapArea = (seatData) =>
+const seatDataHelper = (setSeatData, section, date) =>
 {
-	let	res;
-	let	i;
-	let	temp;
+	let date_str;
 
-	i = -1;
-	res = []
-	while (++i < seatData.data.length)
-	{
-		temp = {
-			left : seatData.data[i].x_offs,
-			top : seatData.data[i].y_offs,
-			height: "6%",//ratio : /1.75
-			width: "3.42%",
-			render : (area, idx) =>
-			{
-				return <SeatUnit activated = {seatData.data[idx].is_activated} available = {seatData.is_avail[idx]}/>
-			},
-			// onMouseOver: () => console.log("map onMouseOver")
-		}
-		res.push(temp);
-	}
-	return (res);
+	date_str = moment(date).format("YY-MM-DD");
+	if (date_str === moment().format("YY-MM-DD"))
+		setSeatData(data.data);
+	else
+		setSeatData(data2.data);
 }
 
 /*
@@ -53,24 +40,53 @@ const imgUrlHelper = (section, setImgUrl) =>
 	}
 }
 
-const FloorLayout = ({date, section, setSeat}) => {
+const FloorLayout = ({date, section, setSeat, currSeat}) => {
 	const [imgUrl, setImgUrl] = useState("https://cdn.discordapp.com/attachments/877898452065992765/889042953530646548/180_GF_with_seats.png")
-	const [seatData, setSeatData] = useState(data.data)
+	const [seatData, setSeatData] = useState(data.data);
+
 	useEffect(() => {
 		imgUrlHelper(section, setImgUrl);
-		setSeatData(data.data);
+		seatDataHelper(setSeatData, section, date);
 		//console.log(seatData);
 	}, [date, section])
-	const mapAreas = generateMapArea(seatData);
-	//const mapAreas = []
 
-	const onMapClick = (area, index) => {
-		const tip = `click map${index + 1}`;
-		console.log(tip, area);
-		alert(tip);
+	/*
+	* Helper function to generate interactive map areas by taking the map data
+	*/
+	const generateMapArea = (seatData) =>
+	{
+		let	res;
+		let	i;
+		let	temp;
+
+		i = -1;
+		res = []
+		while (++i < seatData.data.length)
+		{
+			temp = {
+				left : seatData.data[i].x_offs,
+				top : seatData.data[i].y_offs,
+				height: "6%",//ratio : /1.75
+				width: "3.42%",
+				render : (area, idx) =>
+				{
+					return <SeatUnit
+					activated = {seatData.data[idx].is_activated}
+					available = {seatData.is_avail[idx]}
+					name = {seatData.data[idx].name}
+					setSeat = {setSeat}
+					currSeat = {currSeat}/>
+				},
+			}
+			res.push(temp);
+		}
+		return (res);
 	}
+
+	const mapAreas = generateMapArea(seatData);
+
 	return (
-		<ImageMap src = {imgUrl} map={mapAreas} onMapClick={onMapClick}/>
+		<ImageMap src = {imgUrl} map={mapAreas}/>
 	 );
 }
  

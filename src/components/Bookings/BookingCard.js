@@ -14,6 +14,7 @@ import Popper from '@mui/material/Popper';
 import Fade from '@mui/material/Fade';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
 import useWindowWidth from '../../hooks/useWindowWidth';
 import { useState } from 'react';
 import moment from 'moment';
@@ -54,9 +55,11 @@ const BookingCard = ({show, delay, date, name, seat, booking_id}) => {
 							</Grid>
 
 							<Grid item lg = {2} md = {2} sm = {2} xs = {2}>
-							<IconButton aria-label="delete" size="large" color="error" onClick = {(event) =>{setOpen(!open); setAnchor(event.currentTarget)}}>
-							<DeleteIcon />
-							</IconButton>
+							<Tooltip title="Delete">
+								<IconButton aria-label="delete" size="large" color="error" onClick = {(event) =>{setOpen(!open); setAnchor(event.currentTarget)}}>
+								<DeleteIcon />
+								</IconButton>
+							</Tooltip>
 							<Popper open={open} anchorEl={anchor} placement={"left-start"} >
 								<Fade in>
 								<Paper sx={{padding : "1.5rem"}}>

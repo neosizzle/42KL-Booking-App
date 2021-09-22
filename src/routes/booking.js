@@ -10,8 +10,10 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Navbar from "../components/Navbar";
 import FloorLayout from "../components/FloorLayout/FloorLayout";
+import BookingInfo from "../components/BookingInfo/BookingInfo";
 import useWindowWidth from '../hooks/useWindowWidth';
 import moment from 'moment';
+
 
 const cookies = new Cookies();
 const Book = () => {
@@ -96,8 +98,11 @@ const Book = () => {
 
 			<Box sx = {{display : "flex",justifyContent : "center"}}>
 				<Box sx = {{width : width<=425 ? "95%" : "60%"}}>
-					<FloorLayout date={date} section={section} setSeat={setSeat}/>
+					<FloorLayout date={date} section={section} setSeat={setSeat} currSeat = {seat}/>
 				</Box>
+			</Box>
+			<Box>
+				<BookingInfo width = {width} date = {date} section = {section} seat = {seat}/>
 			</Box>
 		</Box>
 	 );
