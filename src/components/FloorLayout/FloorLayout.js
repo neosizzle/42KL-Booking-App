@@ -24,7 +24,7 @@ const generateMapArea = (seatData) =>
 			width: "3.42%",
 			render : (area, idx) =>
 			{
-				return <SeatUnit activated = {seatData.data[i].is_activated} available = {seatData.is_avail[i]}/>
+				return <SeatUnit activated = {seatData.data[idx].is_activated} available = {seatData.is_avail[idx]}/>
 			},
 			// onMouseOver: () => console.log("map onMouseOver")
 		}
