@@ -4,12 +4,32 @@ import Divider from '@mui/material/Divider';
 import Button from '@mui/material/Button';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Typography } from "@mui/material";
-import moment from 'moment';
 import BookingFeedback from "./BookingFeedback";
+import moment from 'moment';
+import axios from "axios";
 
+/*
+** Helper function to send post request and handle confirm booking
+*/
+const handleConfirm = (user, date, section, seat, setError) => 
+{
+	let	payload;
 
-const BookingInfo = ({width, date, section, seat}) => {
+	payload = {
+		"booked_date" : moment(date).format("YYYY-MM-DD"),
+		"booked_by" : user.data.intra_name,
+		"seat_name" : seat,
+		"seat_section" : section
+	}
+	axios.post(`${process.env.REACT_APP_API_URL}/bookings`, payload)
+	.then((response) => {setError(0)})
+	.catch((error) => {console.log(error.response);setError(error.response.data)})
+	;
+}
+
+const BookingInfo = ({width, date, section, seat, user}) => {
 	const [open, setOpen] = useState(false)
+	const [error, setError] = useState(0)
 	return ( 
 		<Paper elevation = {6} sx = {{
 			padding : "2rem",
@@ -20,21 +40,26 @@ const BookingInfo = ({width, date, section, seat}) => {
 			</Typography>
 			<Divider/>
 			<Typography gutterBottom variant = "h6">
-				Date  <Typography gutterBottom>{moment(date).format("YYYY-MMM-Do")}</Typography>
+				User <Typography gutterBottom>{user.data.intra_name}</Typography>
+			</Typography>
+			<Typography gutterBottom variant = "h6">
+				Date  <Typography gutterBottom>{`${moment(date).format('dddd')}, ${moment(date).format("YYYY-MM-DD")}`}</Typography>
 			</Typography>
 			<Typography gutterBottom variant = "h6">
 				Section <Typography gutterBottom>{section}</Typography>
 			</Typography>
 			<Typography gutterBottom variant = "h6">
-				Seat  <Typography gutterBottom>{seat}</Typography>
+				Seat  <Typography gutterBottom>{seat ? seat : "No seat selected"}</Typography>
 			</Typography>
 			<Button
 			variant="contained"
 			startIcon={<CheckCircleIcon/>}
-			onClick={()=>setOpen(!open)}>
+			onClick={()=>{handleConfirm(user, date, section, seat, setError);setOpen(!open)}}
+			disabled={!seat}
+			>
 				Confirm Booking
 			</Button>
-			<BookingFeedback open = {open} setOpen = {setOpen} width = {width}/>
+			<BookingFeedback open = {open} setOpen = {setOpen} width = {width} error = {error}/>
 		</Paper>
 	 );
 }

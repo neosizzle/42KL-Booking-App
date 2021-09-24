@@ -11,7 +11,7 @@ const handle_signin = ()=>
 const Login = () => {
 	return ( 
 		<Box sx = {{
-			backgroundImage:"url(landing_background.png)",
+			backgroundImage:"url(assets/landing_background.png)",
 			backgroundSize:"cover",
 			height:"100vh",
 			width:"100vw",
@@ -19,7 +19,7 @@ const Login = () => {
 			justifyContent:"center",
 			alignItems:"center",
 			flexDirection : "column"}}>
-			<img src="42 logo.png" alt="42 logo"/>
+			<img src="assets/42 logo.png" alt="42 logo"/>
 			<Typography variant="h3" gutterBottom>
 				Book your iMac
 			</Typography>

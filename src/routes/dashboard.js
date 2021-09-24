@@ -7,28 +7,46 @@ import Bookings from "../components/Bookings/Bookings"
 import Navbar from "../components/Navbar"
 /*
 ** Dashboard page
-
-1. Check for auth code. If there is no auth code, redirect back to root
-2. If there is auth code, get user info from 42API
-3. Create new user in booking API db based on user info 
+** 
+** 1. Get the usewr profile from 42 network api
+** 2. Create a new user object and store that user locally in our db
+** 3. Render the navbar and the booking list
 */
 const cookies = new Cookies();
 const Dashboard = () => {
 
-	const [user42, setUser42] = useState([])
-	const [user, setUser] = useState([])
+	const [user42, setUser42] = useState([]);
+	const [user, setUser] = useState([]);
 
 	useEffect(() => {
+		let	userObj;
+
 		axios.get(`https://api.intra.42.fr/v2/me?access_token=${cookies.get("access_token")}`)
 		.then((response) => 
 		{
-			setUser42(response.data)
+			setUser42(response.data);
+			userObj = {
+				intra_id : response.data.id,
+				intra_name : response.data.login,
+				email : response.data.email,
+				admin : response.data["staff?"]
+			}
 			//set userapi here
-			console.log(response.data);
+			axios.post(`${process.env.REACT_APP_API_URL}/users`, userObj)
+			.then((response)=>setUser(response.data))
+			.catch((error) =>
+			{
+				console.log(error);
+				alert(`error : ${error.message}`);
+				window.location.href = "/"
+			})
+			//console.log(response.data);
+			//console.log(userObj);
 		})
 		.catch((err)=>
 		{
 			console.log(err);
+			alert(`error : ${err.message}`);
 			window.location.href = "/";
 		})
 	}, [])
@@ -39,10 +57,10 @@ const Dashboard = () => {
 
 			<div style={{padding:"3rem"}}>
 			{
-				user42.login?
+				user.data && user.bookings?
 				<div>
 					<Typography variant="h2" component="div" gutterBottom>
-       			 	{user42.login}'s Bookings
+       			 	{user.data.intra_name}'s Bookings
       				</Typography>
 					<Bookings user={user}/>
 				</div>:

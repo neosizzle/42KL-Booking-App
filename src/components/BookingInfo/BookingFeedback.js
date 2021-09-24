@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 
 
-const BookingFeedback = ({open, setOpen, width}) => {
+const BookingFeedback = ({open, setOpen, width, error}) => {
 	const history = useHistory();
 	const handleRedir = useCallback((endp) => history.push(endp), [history]);
 	
@@ -17,7 +17,9 @@ const BookingFeedback = ({open, setOpen, width}) => {
 		open = {open}
 		onClick = {()=>setOpen(!open)}
 		>
-			<Paper variant="outlined" sx = {{color : "#00e35b", backgroundColor:"#cfffe1", padding : width <= 425? "1rem": "4rem 4rem 2rem 4rem", margin : "2rem"}}>
+			{
+				!error?
+				<Paper variant="outlined" sx = {{color : "#00e35b", backgroundColor:"#cfffe1", padding : width <= 425? "1rem": "4rem 4rem 2rem 4rem", margin : "2rem"}}>
 				<Typography variant = "h3" gutterBottom>
 					<CheckCircleOutlineIcon/> Success!
 				</Typography>
@@ -27,18 +29,19 @@ const BookingFeedback = ({open, setOpen, width}) => {
 				<Button variant="contained" onClick = {()=> handleRedir("/dashboard")}>
 					OK
 				</Button>
-			</Paper>
-			{/* <Paper variant="outlined" sx = {{color : "#c62828", backgroundColor:"#f29694", padding : width <= 425? "1rem": "4rem 4rem 2rem 4rem", margin : "2rem"}}>
+				</Paper>:
+				<Paper variant="outlined" sx = {{color : "#c62828", backgroundColor:"#f29694", padding : width <= 425? "1rem": "4rem 4rem 2rem 4rem", margin : "2rem"}}>
 				<Typography variant = "h3" gutterBottom>
 					<ErrorOutlineIcon/> Error!
 				</Typography>
 				<Typography gutterBottom>
-					Something wrong happened : 
+					Something wrong happened : {error.error}
 				</Typography>
 				<Button variant="contained" color="error">
-					asdf
+					OK
 				</Button>
-			</Paper> */}
+				</Paper>
+			}
 		</Backdrop>
 	 );
 }

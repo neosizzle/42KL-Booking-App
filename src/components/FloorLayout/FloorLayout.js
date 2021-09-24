@@ -1,23 +1,27 @@
 import { ImageMap } from "@qiuz/react-image-map";
 import SeatUnit from "./SeatUnit";
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
 import { useEffect, useState } from "react";
 import moment from "moment";
-
-let data = require("../../data/seat");
-let data2 = require("../../data/seat2");
+import axios from "axios";
 
 /*
 ** Helper function to retrive seat data accordingly
 */
 const seatDataHelper = (setSeatData, section, date) =>
 {
-	let date_str;
-
-	date_str = moment(date).format("YY-MM-DD");
-	if (date_str === moment().format("YY-MM-DD"))
-		setSeatData(data.data);
-	else
-		setSeatData(data2.data);
+	axios.get(`${process.env.REACT_APP_API_URL}/seats/section_date?section=${section}&date=${moment(date).format("YYYY-MM-DD")}`)
+	.then((response)=>
+	{
+		//console.log(response);
+		setSeatData(response.data);
+	})
+	.catch((error)=>{
+		console.log(error);
+		alert(`error : ${error.message}`)
+		window.location.href = "/"
+	})
 }
 
 /*
@@ -26,14 +30,17 @@ const seatDataHelper = (setSeatData, section, date) =>
 const imgUrlHelper = (section, setImgUrl) =>
 {
 	switch (section) {
-		case "181/180, GF":
-			setImgUrl("https://cdn.discordapp.com/attachments/877898452065992765/889042953530646548/180_GF_with_seats.png")
+		case "182/181/180, GF":
+			setImgUrl("/assets/182-181-180GF.svg")
 			break;
-		case "181/180, 1F":
-			setImgUrl("https://www.roomsketcher.com/wp-content/uploads/2017/08/RoomSketcher-Custom-2D-Floor-Plan-Branding.jpg")
+		case "182/181/180, 1F":
+			setImgUrl("/assets/182-181-1801F.png")
 			break;
-		case "182/183, GF":
-			setImgUrl("https://www.roomsketcher.com/wp-content/uploads/2017/11/RoomSketcher-Order-Floor-Plans-2D-Floor-Plan.jpg");
+		case "190/191, GF":
+			setImgUrl("/assets/190-191GF.png");
+			break;
+		case "190/191, 1F":
+			setImgUrl("/assets/190-1911F.png");
 			break;
 		default:
 			break;
@@ -41,8 +48,8 @@ const imgUrlHelper = (section, setImgUrl) =>
 }
 
 const FloorLayout = ({date, section, setSeat, currSeat}) => {
-	const [imgUrl, setImgUrl] = useState("https://cdn.discordapp.com/attachments/877898452065992765/889042953530646548/180_GF_with_seats.png")
-	const [seatData, setSeatData] = useState(data.data);
+	const [imgUrl, setImgUrl] = useState(null)
+	const [seatData, setSeatData] = useState(null);
 
 	useEffect(() => {
 		imgUrlHelper(section, setImgUrl);
@@ -60,7 +67,7 @@ const FloorLayout = ({date, section, setSeat, currSeat}) => {
 		let	temp;
 
 		i = -1;
-		res = []
+		res = [];
 		while (++i < seatData.data.length)
 		{
 			temp = {
@@ -73,6 +80,7 @@ const FloorLayout = ({date, section, setSeat, currSeat}) => {
 					return <SeatUnit
 					activated = {seatData.data[idx].is_activated}
 					available = {seatData.is_avail[idx]}
+					transform = {seatData.data[idx].transformation}
 					name = {seatData.data[idx].name}
 					setSeat = {setSeat}
 					currSeat = {currSeat}/>
@@ -83,10 +91,8 @@ const FloorLayout = ({date, section, setSeat, currSeat}) => {
 		return (res);
 	}
 
-	const mapAreas = generateMapArea(seatData);
-
 	return (
-		<ImageMap src = {imgUrl} map={mapAreas}/>
+		seatData? <ImageMap src = {imgUrl} map={generateMapArea(seatData)}/> : <Box><CircularProgress/></Box>
 	 );
 }
  

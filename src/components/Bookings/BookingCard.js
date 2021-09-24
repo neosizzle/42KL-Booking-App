@@ -18,6 +18,17 @@ import Tooltip from '@mui/material/Tooltip';
 import useWindowWidth from '../../hooks/useWindowWidth';
 import { useState } from 'react';
 import moment from 'moment';
+import axios from 'axios';
+
+/*
+** Helper function to handle delete booking event
+*/
+const handleDelete = (booking_id) =>
+{
+	axios.delete(`${process.env.REACT_APP_API_URL}/bookings/${booking_id}`)
+	.then((res) => window.location.reload())
+	.catch((e) => {console.log(e);alert(`error : ${e.message}`)})
+}
 
 const BookingCard = ({show, delay, date, name, seat, booking_id}) => {
 	const width = useWindowWidth();
@@ -49,7 +60,7 @@ const BookingCard = ({show, delay, date, name, seat, booking_id}) => {
 							<Stack direction="row" spacing={2} sx = {{alignItems : "center"}} divider = {<Divider orientation="vertical" flexItem />}>
 							<DateRangeIcon fontSize="small"/>
 							<Typography variant = "h5" gutterBottom>
-								{moment(date).format("MM-DD-YYYY")}
+								{`${moment(date).format('dddd')}, ${moment(date).format("YYYY-MM-DD")}`}
 							</Typography>
 							</Stack>
 							</Grid>
@@ -73,7 +84,7 @@ const BookingCard = ({show, delay, date, name, seat, booking_id}) => {
 									variant="contained"
 									onClick = {()=>setOpen(!open)}
 									>Not yet</Button>
-									<Button variant="text" color="error">Confirm</Button>
+									<Button variant="text" color="error" onClick={() => handleDelete(booking_id)}>Confirm</Button>
 									</Stack>
 								</Paper>
 								</Fade>
