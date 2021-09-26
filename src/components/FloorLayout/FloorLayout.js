@@ -9,13 +9,14 @@ import axios from "axios";
 /*
 ** Helper function to retrive seat data accordingly
 */
-const seatDataHelper = (setSeatData, section, date) =>
+const seatDataHelper = (setSeatData, section, date, setLoading) =>
 {
 	axios.get(`${process.env.REACT_APP_API_URL}/seats/section_date?section=${section}&date=${moment(date).format("YYYY-MM-DD")}`)
 	.then((response)=>
 	{
 		//console.log(response);
 		setSeatData(response.data);
+		setLoading(false);
 	})
 	.catch((error)=>{
 		console.log(error);
@@ -47,15 +48,15 @@ const imgUrlHelper = (section, setImgUrl) =>
 	}
 }
 
-const FloorLayout = ({date, section, setSeat, currSeat}) => {
+const FloorLayout = ({date, section, setSeat, currSeat, loading, setLoading}) => {
 	const [imgUrl, setImgUrl] = useState(null)
 	const [seatData, setSeatData] = useState(null);
 
 	useEffect(() => {
 		imgUrlHelper(section, setImgUrl);
-		seatDataHelper(setSeatData, section, date);
+		seatDataHelper(setSeatData, section, date, setLoading);
 		//console.log(seatData);
-	}, [date, section])
+	}, [date, section, setLoading])
 
 	/*
 	* Helper function to generate interactive map areas by taking the map data
@@ -92,7 +93,7 @@ const FloorLayout = ({date, section, setSeat, currSeat}) => {
 	}
 
 	return (
-		seatData? <ImageMap src = {imgUrl} map={generateMapArea(seatData)}/> : <Box><CircularProgress/></Box>
+		seatData && !loading? <ImageMap src = {imgUrl} map={generateMapArea(seatData)}/> : <Box><CircularProgress/></Box>
 	 );
 }
  

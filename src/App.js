@@ -47,7 +47,7 @@ function App() {
 							Manage
 						</div>
 					</Route>
-					<Route path = "/auth" exact>
+					<Route path = "/auth">
 						<Auth/>
 					</Route>
 					<Route path = "/booking" exact>

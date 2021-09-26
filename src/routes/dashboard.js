@@ -8,20 +8,20 @@ import Navbar from "../components/Navbar"
 /*
 ** Dashboard page
 ** 
-** 1. Get the usewr profile from 42 network api
+** 1. Get the user profile from 42 network api
 ** 2. Create a new user object and store that user locally in our db
 ** 3. Render the navbar and the booking list
 */
 const cookies = new Cookies();
 const Dashboard = () => {
 
-	const [user42, setUser42] = useState([]);
-	const [user, setUser] = useState([]);
+	const [user42, setUser42] = useState(null);
+	const [user, setUser] = useState(null);
 
 	useEffect(() => {
 		let	userObj;
-
-		axios.get(`https://api.intra.42.fr/v2/me?access_token=${cookies.get("access_token")}`)
+		
+		axios.get(`${process.env.REACT_APP_API_URL}/auth/me/${cookies.get("access_token")}`)
 		.then((response) => 
 		{
 			setUser42(response.data);
@@ -53,11 +53,15 @@ const Dashboard = () => {
 
 	return ( 
 		<div>
-			<Navbar active="Dashboard" imgUrl={user42.image_url} isAdmin={user42['staff?']}/>
+			{
+				user42? 
+				<Navbar active="Dashboard" imgUrl={user42.image_url} isAdmin={user42['staff?']}/> : 
+				<CircularProgress/>
+			}
 
 			<div style={{padding:"3rem"}}>
 			{
-				user.data && user.bookings?
+				user?
 				<div>
 					<Typography variant="h2" component="div" gutterBottom>
        			 	{user.data.intra_name}'s Bookings

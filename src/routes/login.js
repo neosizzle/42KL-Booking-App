@@ -19,7 +19,7 @@ const Login = () => {
 			justifyContent:"center",
 			alignItems:"center",
 			flexDirection : "column"}}>
-			<img src="assets/42 logo.png" alt="42 logo"/>
+			<img src="42_logo.png" alt="42 logo"/>
 			<Typography variant="h3" gutterBottom>
 				Book your iMac
 			</Typography>

@@ -12,7 +12,7 @@ const NoBookings = () => {
 			flexDirection : "column",
 			opacity : "0.5"
 			}}>
-			<img src = "/assets/42 logo.png" alt = "logo"/>
+			<img src = "42_logo.png" alt = "logo"/>
 			<Typography variant = "h2">
 				 No Bookings
 			</Typography>

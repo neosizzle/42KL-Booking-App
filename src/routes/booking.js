@@ -26,10 +26,11 @@ const Book = () => {
 	const [open, setOpen] = useState(false);
 	const [section, setSection] = useState("182/181/180, GF");
 	const [anchor, setAnchor] = useState(null);
-	const [seat, setSeat] = useState(null)
+	const [seat, setSeat] = useState(null);
+	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
-		axios.get(`https://api.intra.42.fr/v2/me?access_token=${cookies.get("access_token")}`)
+		axios.get(`${process.env.REACT_APP_API_URL}/auth/me/${cookies.get("access_token")}`)
 		.then((response) => 
 		{
 			setUser42(response.data);
@@ -69,6 +70,7 @@ const Book = () => {
 					onChange={(newValue) => {
 						setDate(newValue);
 						setSeat(null);
+						setLoading(true);
 					}}
 					renderInput={(params) => <TextField {...params} />}
 					minDate={today}
@@ -96,17 +98,24 @@ const Book = () => {
 			'aria-labelledby': 'basic-button',
 			}}
 			>
-			<MenuItem onClick={() => {setOpen(!open); setSection("182/181/180, GF"); setSeat(null)}}> 182/181/180, GF</MenuItem>
-			<MenuItem onClick={() => {setOpen(!open); setSection("182/181/180, 1F"); setSeat(null)}}>182/181/180, 1F</MenuItem>
-			<MenuItem onClick={() => {setOpen(!open); setSection("190/191, GF"); setSeat(null)}}>190/191, GF</MenuItem>
-			<MenuItem onClick={() => {setOpen(!open); setSection("190/191, 1F"); setSeat(null)}}>190/191, 1F</MenuItem>
+			<MenuItem onClick={() => {setOpen(!open); setSection("182/181/180, GF"); setSeat(null); setLoading(true)}}> 182/181/180, GF</MenuItem>
+			<MenuItem onClick={() => {setOpen(!open); setSection("182/181/180, 1F"); setSeat(null); setLoading(true)}}>182/181/180, 1F</MenuItem>
+			<MenuItem onClick={() => {setOpen(!open); setSection("190/191, GF"); setSeat(null); setLoading(true)}}>190/191, GF</MenuItem>
+			<MenuItem onClick={() => {setOpen(!open); setSection("190/191, 1F"); setSeat(null); setLoading(true)}}>190/191, 1F</MenuItem>
 		</Menu>
 			</Grid>
 		</Grid>
 
 		<Box sx = {{display : "flex",justifyContent : "center"}}>
 			<Box sx = {{width : width<=425 ? "95%" : "60%"}}>
-				<FloorLayout date={date} section={section} setSeat={setSeat} currSeat = {seat}/>
+				<FloorLayout
+				date={date}
+				section={section}
+				setSeat={setSeat}
+				currSeat = {seat}
+				loading = {loading}
+				setLoading = {setLoading}
+				/>
 			</Box>
 		</Box>
 		<Box>
