@@ -11,7 +11,7 @@ const handle_signin = ()=>
 const Login = () => {
 	return ( 
 		<Box sx = {{
-			backgroundImage:"url(landing_background.png)",
+			background:"url(landing_background.png) center",
 			backgroundSize:"cover",
 			height:"100vh",
 			width:"100vw",
@@ -19,7 +19,7 @@ const Login = () => {
 			justifyContent:"center",
 			alignItems:"center",
 			flexDirection : "column"}}>
-			<img src="42_logo.png" alt="42 logo" width="500"/>
+			<img src="42_logo.png" alt="42 logo" width="80%" height="auto" style={{ maxWidth:600 }}/>
 			<Typography	variant="h4" sx={{ p: 4 }} gutterBottom>
 				&lt;/book_your_iMac&gt;
 			</Typography>
