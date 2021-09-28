@@ -19,12 +19,14 @@ const Login = () => {
 			justifyContent:"center",
 			alignItems:"center",
 			flexDirection : "column"}}>
-			<img src="42 logo.png" alt="42 logo"/>
-			<Typography variant="h3" gutterBottom>
-				Book your iMac
+			<img src="42_logo.png" alt="42 logo" width="500"/>
+			<Typography	variant="h4" sx={{ p: 4 }} gutterBottom>
+				&lt;/book_your_iMac&gt;
 			</Typography>
 			<Button
 			variant="contained"
+			size="large"
+			style={{ fontSize:"1.5em ", userSelect: "none"}}
 			onClick = {() => handle_signin()}
 			>Sign in with 42</Button>
 		</Box>
