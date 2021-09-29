@@ -2,7 +2,7 @@ import {
 	BrowserRouter as Router,
 	Switch,
 	Route,
-  } from "react-router-dom";
+} from "react-router-dom";
 import Dashboard from "./routes/dashboard"
 import Book from "./routes/booking";
 import Login from './routes/login';
@@ -16,26 +16,43 @@ import "./css/root.css"
 /*
 ** Custom theme
 */
-let theme = createTheme( {
+let theme = createTheme({
 	palette: {
-	  type: 'light',
-	  primary: {
-		main: '#3fff98',
-		light : '#8effb9',
-		dark : '#00e35b',
-	  },
-	  secondary: {
-		main: '#ff3fa5',
-		light: '#fd81c0',
-		dark: '#ff0074'
-	  },
+		type: 'light',
+		primary: {
+			main: '#38560f',
+			contrastText: '#f7fbec',
+		},
+		secondary: {
+			main: '#b46d60',
+		},
+		info: {
+			main: '#60a7b4',
+		},
+		background: {
+			default: '#fffaf2',
+		},
 	},
-  });
+	typography: {
+		fontFamily: 'NTR',
+		subtitle2: {
+			fontSize: '0.9rem',
+		},
+		fontSize: 17,
+		fontWeightLight: 300,
+	},
+	props: {
+		MuiButtonBase: {
+			disableRipple: true,
+		},
+	},
+	spacing: 8,
+});
 
 theme = responsiveFontSizes(theme);
 
 function App() {
-  	return (
+	return (
 		<LocalizationProvider dateAdapter={AdapterMoment}>
 		<ThemeProvider theme = {theme}>
 			<Router className="root">
@@ -64,7 +81,7 @@ function App() {
 			</Router>
 		</ThemeProvider>
 		</LocalizationProvider>
-  	);
+	);
 }
 
 export default App;
