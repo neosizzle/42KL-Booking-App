@@ -11,7 +11,7 @@ const handle_signin = ()=>
 const Login = () => {
 	return ( 
 		<Box sx = {{
-			backgroundImage:"url(assets/landing_background.png)",
+			background:"url(assets/landing_background.png) center",
 			backgroundSize:"cover",
 			height:"100vh",
 			width:"100vw",
@@ -19,12 +19,14 @@ const Login = () => {
 			justifyContent:"center",
 			alignItems:"center",
 			flexDirection : "column"}}>
-			<img src="42_logo.png" alt="42 logo"/>
-			<Typography variant="h3" gutterBottom>
-				Book your iMac
+			<img src="42KL_logo.png" alt="42 logo" width="80%" height="auto" style={{ maxWidth:600 }}/>
+			<Typography	variant="h4" sx={{ p: 4 }} gutterBottom>
+				&lt;/book_your_iMac&gt;
 			</Typography>
 			<Button
 			variant="contained"
+			size="large"
+			style={{ fontSize:"1.5em ", userSelect: "none"}}
 			onClick = {() => handle_signin()}
 			>Sign in with 42</Button>
 		</Box>
