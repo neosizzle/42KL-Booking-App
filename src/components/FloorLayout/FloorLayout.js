@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import { useEffect, useState } from "react";
 import moment from "moment";
 import axios from "axios";
+//import data from "../../data/seat3" dummy data
 
 /*
 ** Helper function to retrive seat data accordingly
@@ -16,10 +17,11 @@ const seatDataHelper = (setSeatData, section, date, setLoading) =>
 	{
 		//console.log(response);
 		setSeatData(response.data);
+		//setSeatData(data.data) dummy data
 		setLoading(false);
 	})
 	.catch((error)=>{
-		console.log(error);
+		console.log(error.response);
 		alert(`error : ${error.message}`)
 		window.location.href = "/"
 	})
@@ -35,13 +37,13 @@ const imgUrlHelper = (section, setImgUrl) =>
 			setImgUrl("/assets/182-181-180GF.svg")
 			break;
 		case "182/181/180, 1F":
-			setImgUrl("/assets/182-181-1801F.png")
+			setImgUrl("/assets/182-181-1801F.svg")
 			break;
 		case "190/191, GF":
-			setImgUrl("/assets/190-191GF.png");
+			setImgUrl("/assets/190-191GF.svg");
 			break;
 		case "190/191, 1F":
-			setImgUrl("/assets/190-1911F.png");
+			setImgUrl("/assets/190-1911F.svg");
 			break;
 		default:
 			break;

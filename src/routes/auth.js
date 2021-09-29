@@ -29,7 +29,7 @@ const Auth = () => {
 		})
 		.catch((err) => 
 		{
-			console.log(err)
+			console.log(err.response)
 			alert("Something wrong occured!");
 			window.location.href = "/";
 		})

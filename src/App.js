@@ -7,6 +7,7 @@ import Dashboard from "./routes/dashboard"
 import Book from "./routes/booking";
 import Login from './routes/login';
 import Auth from "./routes/auth"
+import Admin from "./routes/admin"
 import { createTheme, ThemeProvider, responsiveFontSizes} from '@mui/material/styles';
 import AdapterMoment from '@mui/lab/AdapterMoment';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
@@ -52,6 +53,9 @@ function App() {
 					</Route>
 					<Route path = "/booking" exact>
 						<Book/>
+					</Route>
+					<Route path = "/admin" exact>
+						<Admin/>
 					</Route>
 					<Route path = "/" exact>
 						<Login/>

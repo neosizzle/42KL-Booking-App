@@ -40,7 +40,7 @@ const BookingInfo = ({width, date, section, seat, user}) => {
 			</Typography>
 			<Divider/>
 			<Typography gutterBottom variant = "h6">
-				User <Typography gutterBottom>{user.data.intra_name}</Typography>
+				User <Typography gutterBottom>{user ? user.data.intra_name : "No user"}</Typography>
 			</Typography>
 			<Typography gutterBottom variant = "h6">
 				Date  <Typography gutterBottom>{`${moment(date).format('dddd')}, ${moment(date).format("YYYY-MM-DD")}`}</Typography>
@@ -55,7 +55,7 @@ const BookingInfo = ({width, date, section, seat, user}) => {
 			variant="contained"
 			startIcon={<CheckCircleIcon/>}
 			onClick={()=>{handleConfirm(user, date, section, seat, setError);setOpen(!open)}}
-			disabled={!seat}
+			disabled={!seat || !user}
 			>
 				Confirm Booking
 			</Button>

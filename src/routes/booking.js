@@ -15,6 +15,18 @@ import BookingInfo from "../components/BookingInfo/BookingInfo";
 import useWindowWidth from '../hooks/useWindowWidth';
 import moment from 'moment';
 
+/*
+** Helper to handle section change
+*/
+const handleSectionChange = (setOpen, setSection, setSeat, setLoading, sect, sectTochange)=>
+{
+	setOpen(false);
+	if (sect === sectTochange)
+		return ;
+	setSection(sectTochange);
+	setSeat(null);
+	setLoading(true);
+}
 
 const cookies = new Cookies();
 const Book = () => {
@@ -39,14 +51,14 @@ const Book = () => {
 			.then((response)=>{setUser(response.data)})
 			.catch((error) =>
 			{
-				console.log(error);
+				console.log(error.response);
 				alert(`error : ${error.message}`);
 				window.location.href = "/"
 			})
 		})
 		.catch((err)=>
 		{
-			console.log(err);
+			console.log(err.response);
 			alert("error");
 			window.location.href = "/";
 		})
@@ -56,6 +68,7 @@ const Book = () => {
 		user? <Box>
 		<Navbar active="Booking" imgUrl={user42.image_url} isAdmin={user42['staff?']}/>
 
+		{/*Input selection start */}
 		<Grid container sx={{padding:"2rem"}}>
 			<Grid item
 			lg = {6}
@@ -98,14 +111,16 @@ const Book = () => {
 			'aria-labelledby': 'basic-button',
 			}}
 			>
-			<MenuItem onClick={() => {setOpen(!open); setSection("182/181/180, GF"); setSeat(null); setLoading(true)}}> 182/181/180, GF</MenuItem>
-			<MenuItem onClick={() => {setOpen(!open); setSection("182/181/180, 1F"); setSeat(null); setLoading(true)}}>182/181/180, 1F</MenuItem>
-			<MenuItem onClick={() => {setOpen(!open); setSection("190/191, GF"); setSeat(null); setLoading(true)}}>190/191, GF</MenuItem>
-			<MenuItem onClick={() => {setOpen(!open); setSection("190/191, 1F"); setSeat(null); setLoading(true)}}>190/191, 1F</MenuItem>
+			<MenuItem onClick={() => {handleSectionChange(setOpen, setSection, setSeat, setLoading, section, "182/181/180, GF" )}}> 182/181/180, GF</MenuItem>
+			<MenuItem onClick={() => {handleSectionChange(setOpen, setSection, setSeat, setLoading, section, "182/181/180, 1F" )}}>182/181/180, 1F</MenuItem>
+			<MenuItem onClick={() => {handleSectionChange(setOpen, setSection, setSeat, setLoading, section, "190/191, GF" )}}>190/191, GF</MenuItem>
+			<MenuItem onClick={() => {handleSectionChange(setOpen, setSection, setSeat, setLoading, section, "190/191, 1F" )}}>190/191, 1F</MenuItem>
 		</Menu>
 			</Grid>
 		</Grid>
+		{/*Input selection end */}
 
+		{/*floor layout start */}
 		<Box sx = {{display : "flex",justifyContent : "center"}}>
 			<Box sx = {{width : width<=425 ? "95%" : "60%"}}>
 				<FloorLayout
@@ -118,9 +133,13 @@ const Book = () => {
 				/>
 			</Box>
 		</Box>
+		{/*floor layout end */}
+
+		{/*booking info start*/}
 		<Box>
 			<BookingInfo width = {width} date = {date} section = {section} seat = {seat} user = {user}/>
 		</Box>
+		{/*booking info end*/}
 	</Box> :
 	<CircularProgress/>
 	 );

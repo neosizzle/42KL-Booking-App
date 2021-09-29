@@ -1,20 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import Cookies from 'universal-cookie';
-import Typography from '@mui/material/Typography';
+import { Box } from "@mui/system";
 import CircularProgress from '@mui/material/CircularProgress';
-import Bookings from "../components/Bookings/Bookings"
+import Grid from '@mui/material/Grid';
 import Navbar from "../components/Navbar"
-/*
-** Dashboard page
-** 
-** 1. Get the user profile from 42 network api
-** 2. Create a new user object and store that user locally in our db
-** 3. Render the navbar and the booking list
-*/
-const cookies = new Cookies();
-const Dashboard = () => {
+import SeatManage from "../components/SeatManage/SeatManage"
+import BookingManage from "../components/BookingManage/BookingManage"
+import AdminBookingAdd from "../components/AdminBookingAdd/AdminBookingAdd"
 
+const cookies = new Cookies();
+const Admin = () => {
 	const [user42, setUser42] = useState(null);
 	const [user, setUser] = useState(null);
 
@@ -31,6 +27,11 @@ const Dashboard = () => {
 				email : response.data.email,
 				admin : response.data["staff?"]
 			}
+			if (!userObj.admin)
+			{
+				alert(`error : You are not a staff!`);
+				window.location.href = "/"
+			}
 			//set userapi here
 			axios.post(`${process.env.REACT_APP_API_URL}/users`, userObj)
 			.then((response)=>setUser(response.data))
@@ -45,7 +46,8 @@ const Dashboard = () => {
 		})
 		.catch((err)=>
 		{
-			console.log(err.reponse);
+			console.log(err.response);
+
 			alert(`error : ${err.message}`);
 			window.location.href = "/";
 		})
@@ -55,26 +57,34 @@ const Dashboard = () => {
 		<div>
 			{
 				user42? 
-				<Navbar active="Dashboard" imgUrl={user42.image_url} isAdmin={user42['staff?']}/> : 
+				<Navbar active="Admin" imgUrl={user42.image_url} isAdmin={user42['staff?']}/> : 
 				<CircularProgress/>
 			}
-
-			<div style={{padding:"3rem"}}>
 			{
 				user?
-				<div>
-					<Typography variant="h2" component="div" gutterBottom>
-       			 	{user.data.intra_name}'s Bookings
-      				</Typography>
-					<Bookings user={user}/>
-				</div>:
-				<div style={{display:"flex",justifyContent:"center",alignItems:"center"}}>
-					<CircularProgress color="primary"/>
-				</div>
+				<Box>
+					<Grid container spacing = {2}>
+
+					<Grid item lg = {4} md = {4} sm = {12} xs = {12}>
+						<SeatManage user = {user}/>
+					</Grid>
+
+					<Grid item lg = {8} md = {8} sm = {12} xs = {12}>
+						<BookingManage user = {user}/>
+					</Grid>
+
+					</Grid>
+
+					<Grid container spacing = {2}>
+						<Grid item lg = {12} md = {12} sm = {12} xs = {12}>
+							<AdminBookingAdd/>
+						</Grid>
+					</Grid>
+				</Box> :
+				<CircularProgress/>
 			}
-			</div>
 		</div>
 	 );
 }
  
-export default Dashboard;
+export default Admin;

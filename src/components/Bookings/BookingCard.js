@@ -27,7 +27,7 @@ const handleDelete = (booking_id) =>
 {
 	axios.delete(`${process.env.REACT_APP_API_URL}/bookings/${booking_id}`)
 	.then((res) => window.location.reload())
-	.catch((e) => {console.log(e);alert(`error : ${e.message}`)})
+	.catch((e) => {console.log(e.response);alert(`error : ${e.message}`)})
 }
 
 const BookingCard = ({show, delay, date, name, seat, booking_id}) => {
