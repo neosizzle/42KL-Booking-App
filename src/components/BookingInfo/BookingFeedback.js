@@ -5,6 +5,7 @@ import Paper from '@mui/material/Paper';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
 import Button from '@mui/material/Button';
 
 
@@ -19,6 +20,8 @@ const BookingFeedback = ({open, setOpen, width, error}) => {
 		>
 			{
 				!error?
+				<CircularProgress/>:
+				error === -1?
 				<Paper variant="outlined" sx = {{color : "#00e35b", backgroundColor:"#cfffe1", padding : width <= 425? "1rem": "4rem 4rem 2rem 4rem", margin : "2rem"}}>
 				<Typography variant = "h3" gutterBottom>
 					<CheckCircleOutlineIcon/> Success!

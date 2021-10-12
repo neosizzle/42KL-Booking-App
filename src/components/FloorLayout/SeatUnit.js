@@ -43,6 +43,7 @@ const SeatUnit = ({activated, available, transform, name ,setSeat, currSeat}) =>
 				vertical: 'bottom',
 				horizontal: 'center',
 			}}
+			disableRestoreFocus
 			>
 			<Box sx = {{padding : "1rem"}}>
 			<Typography variant = "body1" gutterBottom>

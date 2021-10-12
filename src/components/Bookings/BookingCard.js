@@ -8,6 +8,7 @@ import FingerprintIcon from '@mui/icons-material/Fingerprint';
 import IconButton from '@mui/material/IconButton';
 import PersonIcon from '@mui/icons-material/Person';
 import DesktopMacIcon from '@mui/icons-material/DesktopMac';
+import RoomIcon from '@mui/icons-material/Room';
 import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import Popper from '@mui/material/Popper';
@@ -15,28 +16,41 @@ import Fade from '@mui/material/Fade';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
+import Backdrop from '@mui/material/Backdrop';
+import LocateSeat from '../LocateSeat/LocateSeat';
 import useWindowWidth from '../../hooks/useWindowWidth';
 import { useState } from 'react';
 import moment from 'moment';
 import axios from 'axios';
+import Cookies from 'universal-cookie';
 
+const cookies = new Cookies();
 /*
 ** Helper function to handle delete booking event
 */
 const handleDelete = (booking_id) =>
 {
-	axios.delete(`${process.env.REACT_APP_API_URL}/bookings/${booking_id}`)
+	let headers;
+
+	headers = {
+		headers : {
+			authorization : "OAuth " + cookies.get("access_token")
+		}
+	}
+	axios.delete(`${process.env.REACT_APP_API_URL}/bookings/${booking_id}`, headers)
 	.then((res) => window.location.reload())
 	.catch((e) => {console.log(e.response);alert(`error : ${e.message}`)})
 }
 
 const BookingCard = ({show, delay, date, name, seat, booking_id}) => {
 	const width = useWindowWidth();
-	const [open, setOpen] = useState(false)
-	const [anchor, setAnchor] = useState(null)
+	const [open, setOpen] = useState(false);
+	const [anchor, setAnchor] = useState(null);
+	const [locateOpen, setLocateOpen] = useState(false);
 	let	today;
 
 	today = moment().startOf('day').format()
+	date = moment(date).startOf('day').format()
 	return ( 
 		<Fade in={show} timeout = {(delay + 1) * 500}>
 			<Card sx = {{minWidth:"100%", margin:"2rem"}}>
@@ -66,8 +80,20 @@ const BookingCard = ({show, delay, date, name, seat, booking_id}) => {
 							</Grid>
 
 							<Grid item lg = {2} md = {2} sm = {2} xs = {2}>
+							<Tooltip title="Locate seat">
+								<IconButton color="primary" onClick = {(event) =>{setLocateOpen(true)}}>
+								<RoomIcon />
+								</IconButton>
+							</Tooltip>
+							<Backdrop
+								sx={{zIndex: (theme) => theme.zIndex.drawer + 1 }}
+								open={locateOpen}
+								onClick={() => setLocateOpen(false)}
+							>
+								<LocateSeat seat_name = {seat.name} seat_section = {seat.section}/>
+							</Backdrop>
 							<Tooltip title="Delete">
-								<IconButton aria-label="delete" size="large" color="error" onClick = {(event) =>{setOpen(!open); setAnchor(event.currentTarget)}}>
+								<IconButton color="error" onClick = {(event) =>{setOpen(!open); setAnchor(event.currentTarget)}}>
 								<DeleteIcon />
 								</IconButton>
 							</Tooltip>
@@ -103,7 +129,7 @@ const BookingCard = ({show, delay, date, name, seat, booking_id}) => {
 							<Stack direction="row" spacing={2} sx = {{alignItems : "center"}}>
 							<DesktopMacIcon fontSize = "small"/>
 							<Typography variant = "body1" gutterBottom>
-								{`${seat.section}, ${seat.name}`}
+								{seat.name}
 							</Typography>
 							</Stack>
 						</Grid>
@@ -121,6 +147,8 @@ const BookingCard = ({show, delay, date, name, seat, booking_id}) => {
 							{
 								(date < today) ?
 								<Typography variant = "caption" sx = {{color : "red"}}>Expired</Typography> :
+								(date === today)?
+								<Typography variant = "caption" sx = {{color : "warning.main"}}>Present</Typography>:
 								<Typography variant = "caption" sx = {{color : "#00e35b"}}>Upcoming</Typography>
 							}
 						</Grid>

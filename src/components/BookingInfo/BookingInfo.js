@@ -7,13 +7,16 @@ import { Typography } from "@mui/material";
 import BookingFeedback from "./BookingFeedback";
 import moment from 'moment';
 import axios from "axios";
+import Cookies from 'universal-cookie';
 
+const cookies = new Cookies();
 /*
 ** Helper function to send post request and handle confirm booking
 */
 const handleConfirm = (user, date, section, seat, setError) => 
 {
 	let	payload;
+	let headers;
 
 	payload = {
 		"booked_date" : moment(date).format("YYYY-MM-DD"),
@@ -21,8 +24,13 @@ const handleConfirm = (user, date, section, seat, setError) =>
 		"seat_name" : seat,
 		"seat_section" : section
 	}
-	axios.post(`${process.env.REACT_APP_API_URL}/bookings`, payload)
-	.then((response) => {setError(0)})
+	headers = {
+		headers : {
+			Authorization : "OAuth " + cookies.get("access_token")
+		}
+	}
+	axios.post(`${process.env.REACT_APP_API_URL}/bookings`, payload, headers)
+	.then((response) => {setError(-1)})
 	.catch((error) => {console.log(error.response);setError(error.response.data)})
 	;
 }

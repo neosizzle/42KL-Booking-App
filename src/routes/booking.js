@@ -33,13 +33,13 @@ const Book = () => {
 	const width = useWindowWidth();
 	const [user42, setUser42] = useState();
 	const [user, setUser] = useState();
-	const today = moment().startOf('day');
-	const [date, setDate] = useState(today);
+	const [date, setDate] = useState(moment().startOf('day').add(1, "days"));
 	const [open, setOpen] = useState(false);
 	const [section, setSection] = useState("182/181/180, GF");
 	const [anchor, setAnchor] = useState(null);
 	const [seat, setSeat] = useState(null);
 	const [loading, setLoading] = useState(false);
+	const [days_ahead, setDays_ahead] = useState(5);
 
 	useEffect(() => {
 		axios.get(`${process.env.REACT_APP_API_URL}/auth/me/${cookies.get("access_token")}`)
@@ -62,6 +62,12 @@ const Book = () => {
 			alert("error");
 			window.location.href = "/";
 		})
+
+		axios.get(`${process.env.REACT_APP_API_URL}/booking_ticket`)
+		.then((response)=>{
+			setDays_ahead(response.data.data.days_in_advance);
+		})
+		.catch((e)=>{console.log(e); alert("Error fetching ticket data"); window.location.reload()})
 	}, [])
 
 	return ( 
@@ -86,8 +92,8 @@ const Book = () => {
 						setLoading(true);
 					}}
 					renderInput={(params) => <TextField {...params} />}
-					minDate={today}
-					maxDate={moment().startOf('day').add(5, "days")}
+					minDate={moment().startOf('day').add(1, "days")}
+					maxDate={moment().startOf('day').add(days_ahead, "days")}
 					cancelText=""
 				/>
 			</Grid>

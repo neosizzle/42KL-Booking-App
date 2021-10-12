@@ -13,39 +13,56 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
 import axios from "axios";
 import moment from "moment";
+import {useJsonToCsv} from 'react-json-csv';
+import Cookies from 'universal-cookie';
 
+const cookies = new Cookies();
 const handleDelete = (id, setReload, reload) =>
 {
-	axios.delete(`${process.env.REACT_APP_API_URL}/bookings/${id}`)
+	let headers;
+
+	headers = {
+		headers : {
+			Authorization : "OAuth " + cookies.get("access_token")
+		}
+	}
+	axios.delete(`${process.env.REACT_APP_API_URL}/bookings/${id}`, headers)
 	.then((res) => setReload(-reload))
 	.catch((e) => {console.log(e.response);alert(`error : ${e.message}`)})
 }
 
-const BookingDisplay = ({user_name}) => {
+const BookingDisplayDate = ({date}) => {
 	const data_per_page = 3;
-	const [user, setUser] = useState(null);
 	const [bookings, setBookings] = useState(null);
 	const [currPage, setCurrPage] = useState(0);
 	const [dataSize, setDataSize] = useState(null);
 	const [reload, setReload] = useState(1);
-	const [open, setOpen] = useState(false)
+	const [open, setOpen] = useState(false);
+	const { saveAsCsv } = useJsonToCsv();
+	const csvFields = {
+		_id : "Booking ID",
+		booked_by : "User",
+		booked_date : "Date",
+		seat_section : "Seat Section",
+		seat_name : "Seat Name"
+	};
 
 	useEffect(() => {
-		if (!user_name)
+		if (!date)
 			return;
-		axios.get(`${process.env.REACT_APP_API_URL}/users/${user_name}`)
+		axios.get(`${process.env.REACT_APP_API_URL}/bookings/date/${moment(date).format("YYYY-MM-DD")}`)
 		.then((response) => {
-			setUser(response.data.data);
-			setBookings(response.data.bookings);
-			setDataSize(response.data.bookings.length);
+			setBookings(response.data.data);
+			setDataSize(response.data.data.length);
 		})
 		.catch((e) => {console.log(e.response); alert("error"); window.location.href = "/"})
-	}, [user_name, dataSize, reload])
+	}, [date, dataSize, reload])
 
 	return (
-		user?
+		date?
 		<TableContainer>
 		<Table>
 			<TableHead>
@@ -95,20 +112,25 @@ const BookingDisplay = ({user_name}) => {
 							</TableCell>
 						</TableRow>
 					}):
-					null
+					<CircularProgress/>
 				}
 			</TableBody>
 			<TableFooter>
 				{
 					dataSize?
 					<TableRow>
-					<TablePagination
-					count = {dataSize}
-					onPageChange = {(event, page)=> setCurrPage(page)}
-					page = {currPage}
-					rowsPerPageOptions = {[]}
-					rowsPerPage = {data_per_page}
-					/>
+						<TableCell>
+						<Button onClick={() => saveAsCsv({ data : bookings, fields : csvFields, filename : "export"})}>
+						 Export to CSV
+						</Button>
+						</TableCell>
+						<TablePagination
+						count = {dataSize}
+						onPageChange = {(event, page)=> setCurrPage(page)}
+						page = {currPage}
+						rowsPerPageOptions = {[]}
+						rowsPerPage = {data_per_page}
+						/>
 					</TableRow>:
 				null
 				}
@@ -120,10 +142,10 @@ const BookingDisplay = ({user_name}) => {
 				<img style = {{height : "100%", maxWidth : "100%"}}src = "42_logo.png" alt = "logo"/>
 			</Box>
 			<Typography align = "center" variant = "h4">
-					Pick a user
+					Pick a Date
 			</Typography>
 		</Box>
 	);
 }
  
-export default BookingDisplay;
+export default BookingDisplayDate;

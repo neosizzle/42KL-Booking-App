@@ -1,38 +1,16 @@
-import { useState, useEffect } from "react";
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
+import { useState} from "react";
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
-import LinearProgress from '@mui/material/LinearProgress';
 import Typography from '@mui/material/Typography';
-import BookingDisplay from "./BookingDisplay"
-import axios from "axios"
-
-
-/*
-** helper function to extract the seat names from json data
-** and put them in an array
-*/
-const generate_user_names = (data, setUserNames) =>
-{
-	let res;
-
-	res = [];
-	data.data.forEach(element => {
-		res.push(element.intra_name);
-	});
-	setUserNames(res);
-}
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import ByStudent from "./ByStudent";
+import ByDate from "./ByDate"
+import Tickets from "./Tickets"
 
 const BookingManage = () => {
-	const [userNames, setUserNames] = useState(null);
-	const [value, setValue] = useState(null);
+	const [tabSelect, setTabSelect] = useState(0);
 
-	useEffect(() => {
-		axios.get(`${process.env.REACT_APP_API_URL}/users`)
-		.then((response) => generate_user_names(response.data, setUserNames))
-		.catch((e) => {console.log(e.response); alert("error"); window.location.href = "/"})
-	}, [])
 
 	return (
 		<Box sx = {{padding : "3rem"}}>
@@ -41,19 +19,26 @@ const BookingManage = () => {
 					Manage bookings
 				</Typography>
 				<br/>
+				<Tabs
+				variant = "scrollable"
+				value = {tabSelect}
+				onChange = {(e, val) => setTabSelect(val)}
+				>
+					<Tab label="By Student" value = {0}/>
+					<Tab label="By Date" value = {1}/>
+					<Tab label="Tickets" value = {2}/>
+				</Tabs>
+				<br/>
 				{
-				   userNames?
-				   <Autocomplete
-				   value={value}
-				   onChange={(event, newValue) => {
-				   setValue(newValue);
-				   }}
-				   options={userNames}
-				   renderInput={(params) => <TextField {...params} label="Intra login" />}
-				   />:
-				   <LinearProgress/>
-			   }
-			   <BookingDisplay user_name = {value}/>
+					tabSelect === 0?
+					<ByStudent/>:
+					tabSelect === 1?
+					<ByDate/> :
+					tabSelect === 2?
+					<Tickets/>
+					:
+					null
+				}
 			</Paper>
 		</Box>
 	);

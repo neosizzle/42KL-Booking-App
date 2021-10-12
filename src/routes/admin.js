@@ -20,6 +20,8 @@ const Admin = () => {
 		axios.get(`${process.env.REACT_APP_API_URL}/auth/me/${cookies.get("access_token")}`)
 		.then((response) => 
 		{
+			let headers;
+
 			setUser42(response.data);
 			userObj = {
 				intra_id : response.data.id,
@@ -32,8 +34,13 @@ const Admin = () => {
 				alert(`error : You are not a staff!`);
 				window.location.href = "/"
 			}
+			headers = {
+				headers : {
+					Authorization : "OAuth " + cookies.get("access_token")
+				}
+			}
 			//set userapi here
-			axios.post(`${process.env.REACT_APP_API_URL}/users`, userObj)
+			axios.post(`${process.env.REACT_APP_API_URL}/users`, userObj, headers)
 			.then((response)=>setUser(response.data))
 			.catch((error) =>
 			{

@@ -14,7 +14,10 @@ import FloorLayout from "../FloorLayout/FloorLayout";
 import BookingInfo from "../BookingInfo/BookingInfo";
 import axios from "axios";
 import moment from 'moment';
+import Cookies from 'universal-cookie';
 import useWindowWidth from "../../hooks/useWindowWidth";
+
+const cookies = new Cookies();
 
 /*
 ** helper function to extract the seat names from json data
@@ -47,15 +50,22 @@ const handleSectionChange = (setOpen, setSection, setSeat, setLoading, sect, sec
 /*
 ** Helper to get the user object given the username
 */
-const getUser = (username, setUserPicked) =>
+const getUser = (username, setUserPicked, setError) =>
 {
-	axios.get(`${process.env.REACT_APP_API_URL}/users/${username}`)
+	setError(false);
+	axios.get(`${process.env.REACT_APP_API_URL}/users/${username}?token=${cookies.get("access_token")}`)
 			.then((response)=>{setUserPicked(response.data)})
 			.catch((error) =>
 			{
 				console.log(error.response);
+				if (error.response.status === "404")
+				{
+					setError(true);
+					setUserPicked(null);
+					return ;
+				}
 				alert(`error : ${error.message}`);
-				window.location.href = "/"
+				window.location.href = "/";
 			})
 }
 
@@ -64,19 +74,26 @@ const AdminBookingAdd = () => {
 	const [userNames, setUserNames] = useState(null);
 	const [usernamePicked, setUsernamePicked] = useState(null);
 	const [userPicked, setUserPicked] = useState(null)
-	const today = moment().startOf('day');
-	const [date, setDate] = useState(today);
+	const [date, setDate] = useState(moment().startOf('day').add(1, "days"));
 	const [open, setOpen] = useState(false);
 	const [section, setSection] = useState("182/181/180, GF");
 	const [anchor, setAnchor] = useState(null);
 	const [seat, setSeat] = useState(null);
 	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState(false);
+	const [days_ahead, setDays_ahead] = useState(5);
 
 	useEffect(() => {
 		axios.get(`${process.env.REACT_APP_API_URL}/users`)
 		.then((response) => generate_user_names(response.data, setUserNames))
 		.catch((e) => {console.log(e.response); alert("error"); window.location.href = "/"})
-	}, [])
+
+		axios.get(`${process.env.REACT_APP_API_URL}/booking_ticket`)
+		.then((response)=>{
+			setDays_ahead(response.data.data.days_in_advance);
+		})
+		.catch((e)=>{console.log(e); alert("Error fetching ticket data"); window.location.reload()})
+	}, [usernamePicked])
 
 	return ( 
 		<Box sx = {{padding : "3rem"}}>
@@ -88,15 +105,21 @@ const AdminBookingAdd = () => {
 				{
 				   userNames?
 				   <Autocomplete
+				   freeSolo
 				   value={usernamePicked}
 				   onChange={(event, newValue) => {
-				   setUsernamePicked(newValue);
-				   getUser(newValue, setUserPicked);
+				   	setUsernamePicked(newValue);
+				   	getUser(newValue, setUserPicked, setError);
 				   }}
 				   options={userNames}
-				   renderInput={(params) => <TextField {...params} label="Intra login" />}
+				   renderInput={(params) => <TextField {...params} color = {error? "error" : "primary"} label="Intra login" />}
 				   />:
 				   <LinearProgress/>
+			   }
+			   {
+				   error?
+				   <Typography variant = "caption" color = "error">No user</Typography> :
+				   null
 			   }
 				{/*Input selection start */}
 				<Grid container sx={{padding:"2rem"}}>
@@ -116,8 +139,8 @@ const AdminBookingAdd = () => {
 								setLoading(true);
 							}}
 							renderInput={(params) => <TextField {...params} />}
-							minDate={today}
-							maxDate={moment().startOf('day').add(5, "days")}
+							minDate={moment().startOf('day').add(1, "days")}
+							maxDate={moment().startOf('day').add(days_ahead, "days")}
 							cancelText=""
 						/>
 					</Grid>

@@ -18,6 +18,7 @@
     "react-clock": "^3.0.0",
     "react-dom": "^17.0.2",
     "react-image-mapper": "^0.0.15",
+    "react-json-csv": "^2.0.0",
     "react-router-dom": "^5.3.0",
     "react-scripts": "4.0.3",
     "universal-cookie": "^4.0.4",

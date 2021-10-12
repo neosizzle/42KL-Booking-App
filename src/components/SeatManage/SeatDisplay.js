@@ -22,8 +22,7 @@ import axios from 'axios';
 */
 const handleActivate = (setReload, reload, seat_name, userID)=>
 {
-	console.log(userID);
-	axios.patch(`${process.env.REACT_APP_API_URL}/seats/activate/${seat_name}`, null, {headers :{userID : "admin"}})
+	axios.patch(`${process.env.REACT_APP_API_URL}/seats/activate/${seat_name}`, null, {headers :{userID : userID}})
 	.then((response) => {
 		setReload(-reload)
 	})

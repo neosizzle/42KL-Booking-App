@@ -3,8 +3,9 @@ import axios from "axios";
 import Cookies from 'universal-cookie';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
-import Bookings from "../components/Bookings/Bookings"
-import Navbar from "../components/Navbar"
+import Bookings from "../components/Bookings/Bookings";
+import Navbar from "../components/Navbar";
+
 /*
 ** Dashboard page
 ** 
@@ -21,9 +22,12 @@ const Dashboard = () => {
 	useEffect(() => {
 		let	userObj;
 		
+		console.log(cookies.get("access_token"))
 		axios.get(`${process.env.REACT_APP_API_URL}/auth/me/${cookies.get("access_token")}`)
 		.then((response) => 
 		{
+			let headers;
+
 			setUser42(response.data);
 			userObj = {
 				intra_id : response.data.id,
@@ -32,7 +36,12 @@ const Dashboard = () => {
 				admin : response.data["staff?"]
 			}
 			//set userapi here
-			axios.post(`${process.env.REACT_APP_API_URL}/users`, userObj)
+			headers = {
+				headers : {
+					Authorization : "OAuth " + cookies.get("access_token")
+				}
+			}
+			axios.post(`${process.env.REACT_APP_API_URL}/users`, userObj, headers)
 			.then((response)=>setUser(response.data))
 			.catch((error) =>
 			{
